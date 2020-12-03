@@ -12,6 +12,6 @@ export default class  extends Phaser.Scene {
     }
     create (data)
     {
-        this.game.load_scene('scene1')
+        this.game.load_scene('level1')
     }
 }
