@@ -127,8 +127,10 @@ export default class extends Phaser.Scene {
                     }
 
                     //  Walked far enough?
+
+
                     if (Phaser.Math.Distance.Between(this.startX, this.startY, this.x, this.y) >= this.distance) {
-                        this.direction = directions[this.direction.opposite];
+                        this.direction = this.directions[this.direction.opposite];
                         this.f = this.anim.startFrame;
                         this.frame = this.texture.get(this.direction.offset + this.f);
                         this.startX = this.x;
@@ -141,6 +143,20 @@ export default class extends Phaser.Scene {
         return this
     }
     init_cursor() {
+
+
+        this.input.keyboard.on('keydown-W', () => {
+            this.players[0].direction = this.players[0].directions['northEast']
+        });
+        this.input.keyboard.on('keydown-A', () => {
+            this.players[0].direction = this.players[0].directions['northWest']
+        });
+        this.input.keyboard.on('keydown-S', () => {
+            this.players[0].direction = this.players[0].directions['southWest']
+        });
+        this.input.keyboard.on('keydown-D', () => {
+            this.players[0].direction = this.players[0].directions['southEast']
+        });
         var cursors = this.input.keyboard.createCursorKeys();
 
         var controlConfig = {
@@ -157,6 +173,52 @@ export default class extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         return this
     }
+    cartesianToIsometric(cartPt) {
+        let tempPt = new Phaser.Point();
+        tempPt.x = cartPt.x - cartPt.y;
+        tempPt.y = (cartPt.x + cartPt.y) / 2;
+        return (tempPt);
+    }
+    isometricToCartesian(isoPt) {
+        let tempPt = new Phaser.Point();
+        tempPt.x = (2 * isoPt.y + isoPt.x) / 2;
+        tempPt.y = (2 * isoPt.y - isoPt.x) / 2;
+        return (tempPt);
+    }
+    find_path(event) {
+        let pos = Object.assign({}, event.position)
+        let isoPt = new Phaser.Point(pos.x - borderOffset.x, pos.y - borderOffset.y)
+        let tapPos = isometricToCartesian(isoPt)
+
+        console.log(tapPos)
+
+        this.players[0].x = pos.x
+        this.players[0].y = pos.y
+
+        return
+        //if (isFindingPath || isWalking) return;
+
+
+        tapPos = isometricToCartesian(isoPt);
+        tapPos.x -= tileWidth / 2; //adjustment to find the right tile for error due to rounding off
+        tapPos.y += tileWidth / 2;
+        tapPos = getTileCoordinates(tapPos, tileWidth);
+        if (tapPos.x > -1 && tapPos.y > -1 && tapPos.x < 7 && tapPos.y < 7) { //tapped within grid
+            if (levelData[tapPos.y][tapPos.x] != 1) { //not wall tile
+                isFindingPath = true;
+                //let the algorithm do the magic
+                easystar.findPath(heroMapTile.x, heroMapTile.y, tapPos.x, tapPos.y, plotAndMove);
+                easystar.calculate();
+            }
+        }
+
+
+    }
+    init_mouse() {
+        this.input.on('pointerdown', (...args) => this.find_path(...args), this);
+        //this.input.activePointer.leftButton.onUp.add(this.findPath)
+        return this
+    }
     make_map() {
         this.map = this.make.tilemap({ key: 'map' })
         let tiles = this.map.addTilesetImage('isometric_grass_and_water', 'tiles');
@@ -167,12 +229,12 @@ export default class extends Phaser.Scene {
         if (data) {
 
         }
-        this.players.push(this.add.existing(new this.skeleton(this, 240, 290, 'walk', 'southEast', 100)));
+        this.players.push(this.add.existing(new this.skeleton(this, 240, 290, 'walk', 'southEast', 1000)));
         return this
     }
 
     create(data) {
-        this.init_skeleton().make_map().add_player().init_cursor()
+        this.init_skeleton().make_map().add_player().init_cursor().init_mouse()
         this.cameras.main.setZoom(1.2);
 
 
@@ -181,6 +243,9 @@ export default class extends Phaser.Scene {
     }
 
     update(time, delta) {
-        this.controls.update(delta);
+        this.controls.update(delta)
+        this.players.forEach((player) => {
+            player.update()
+        });
     }
 }
