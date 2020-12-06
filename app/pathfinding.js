@@ -32,28 +32,8 @@ class MMORPG extends Phaser.Scene {
 
 		const cam = this.cameras.main
 
-		const gui = new dat.GUI()
-
-		const controls = {
-			controls1: 'Cursors to move',
-			controls2: 'Q & E to zoom',
-			controls3: 'MouseWheel to zoom'
-		}
-
-		const help = gui.addFolder('Camera')
-		help.add(cam, 'x').listen()
-		help.add(cam, 'y').listen()
-		help.add(cam, 'scrollX').listen()
-		help.add(cam, 'scrollY').listen()
-		help.add(cam, 'rotation').min(0).step(0.01).listen()
-		help.add(cam, 'zoom', 0.125, 5).step(0.125).listen()
-		help.add(controls, 'controls1')
-		// help.add(controls, 'controls2')
-		help.add(controls, 'controls3')
-		help.open()
-
-		//this.cameras.main.setRoundPixels(true)
-		// this.cameras.main.setBounds(-map.widthInPixels, 0, map.widthInPixels, map.heightInPixels)
+		// cam.setRoundPixels(true)
+		// cam.setBounds(-map.widthInPixels, 0, map.widthInPixels, map.heightInPixels)
 		cam.centerOn(0, map.heightInPixels / 2)
 		cam.setZoom(2)
 
@@ -76,9 +56,94 @@ class MMORPG extends Phaser.Scene {
 		this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
 			cam.zoom += deltaY * -0.00125
 		})
+
+		this.gui = this.gui_render({layer1, layer2, layer3, layer4, layer5, cam})
+	}
+
+	gui_render(data) {
+		// noinspection JSUnresolvedFunction
+		const gui = new Tweakpane()
+
+		const layer_controls = gui.addFolder({
+			title: 'Layers',
+			expanded: false
+		})
+
+		layer_controls.addInput(data.layer1, 'alpha', {
+			label: 'Layer 1 Alpha',
+			min: 0,
+			max: 1
+		})
+
+		layer_controls.addInput(data.layer2, 'alpha', {
+			label: 'Layer 2 Alpha',
+			min: 0,
+			max: 1
+		})
+
+		layer_controls.addInput(data.layer3, 'alpha', {
+			label: 'Layer 3 Alpha',
+			min: 0,
+			max: 1
+		})
+
+		layer_controls.addInput(data.layer4, 'alpha', {
+			label: 'Layer 4 Alpha',
+			min: 0,
+			max: 1
+		})
+
+		layer_controls.addInput(data.layer5, 'alpha', {
+			label: 'Layer 5 Alpha',
+			min: 0,
+			max: 1
+		})
+
+		const camera_controls = gui.addFolder({
+			title: 'Camera',
+			expanded: false
+		})
+
+		camera_controls.addInput(data.cam, 'x')
+		camera_controls.addInput(data.cam, 'y')
+		camera_controls.addInput(data.cam, 'scrollX')
+		camera_controls.addInput(data.cam, 'scrollY')
+
+		camera_controls.addInput(data.cam, 'rotation', {
+			min: 0,
+			step: 0.01
+		})
+
+		camera_controls.addInput(data.cam, 'zoom', {
+			min: 0.125,
+			max: 5,
+			step: 0.125
+		})
+
+		const controls = {
+			controls1: 'Cursors to move',
+			controls2: 'Q & E to zoom',
+			controls3: 'MouseWheel to zoom'
+		}
+
+		const help_controls = gui.addFolder({
+			title: 'Help',
+			expanded: true
+		})
+
+		help_controls.addInput(controls, 'controls1', {
+			label: 'Keyboard'
+		})
+
+		help_controls.addInput(controls, 'controls3', {
+			label: 'Mouse'
+		})
+
+		return gui
 	}
 
 	update(time, delta) {
+		this.gui.refresh()
 		this.controls.update(delta)
 	}
 }
