@@ -1,9 +1,6 @@
-class MMORPG extends Phaser.Scene {
-	constructor()
-	{
-		super()
-
-		this.controls = null
+class Map extends Phaser.Scene {
+	constructor() {
+		super('Map')
 	}
 
 	preload() {
@@ -55,6 +52,10 @@ class MMORPG extends Phaser.Scene {
 		// noinspection JSUnusedLocalSymbols
 		this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
 			cam.zoom += deltaY * -0.00125
+		})
+
+		this.input.on('pointermove', (pointer, localX, localY, event) => {
+			// console.log(pointer, localX, localY, event)
 		})
 
 		this.gui = this.gui_render({layer1, layer2, layer3, layer4, layer5, cam})
@@ -148,7 +149,26 @@ class MMORPG extends Phaser.Scene {
 	}
 }
 
-new Phaser.Game({
+class UI extends Phaser.Scene {
+	constructor() {
+		super({
+			key: 'UI',
+			active: true
+		})
+	}
+
+	create() {
+		this.fps = this.add.text(5, 5, 'FPS 0', {fontFamily: 'sans-serif', fontSize: 20, color: '#fff'})
+		this.fps.setStroke('#000', 3)
+		// this.fps.setShadow(2, 2, '#333', 2, true, false)
+	}
+
+	update() {
+		this.fps.text = `FPS ${Math.round(this.sys.game.loop.actualFps)}`
+	}
+}
+
+let game = new Phaser.Game({
 	type: Phaser.WEBGL,
 	width: '100%',
 	height: '100%',
@@ -162,5 +182,5 @@ new Phaser.Game({
 	physics: {
 		default: 'arcade',
 	},
-	scene: [MMORPG]
+	scene: [Map, UI]
 })
