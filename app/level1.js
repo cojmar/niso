@@ -56,7 +56,7 @@ export default class extends Phaser.Scene {
 
             initialize:
 
-                function Skeleton(scene, x, y, motion, direction, distance) {
+                function skeleton(scene, x, y, motion, direction, distance) {
                 this.startX = x;
                 this.startY = y;
                 this.distance = distance;
@@ -88,8 +88,12 @@ export default class extends Phaser.Scene {
                             break;
 
                         case 'attack':
-                            delay = Math.random() * 2;
-                            this.scene.time.delayedCall(delay * 1000, this.resetAnimation, [], this);
+                            //delay = Math.random() * 2;
+                            this.scene.time.delayedCall(delay * 1000, () => {
+                                this.resetAnimation()
+                                this.setMotion('walk')
+                            }, [], this);
+
                             break;
 
                         case 'idle':
@@ -116,7 +120,13 @@ export default class extends Phaser.Scene {
 
                 this.scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
             },
-
+            setMotion: function(motion) {
+                this.motion = motion;
+                this.anim = this.anims[motion];
+                //this.speed = 0.15;
+                this.f = this.anim.startFrame;
+                this.frame = this.texture.get(this.direction.offset + this.f);
+            },
             update: function() {
                 if (this.motion === 'walk') {
                     this.x += this.direction.x * this.speed;
@@ -143,7 +153,12 @@ export default class extends Phaser.Scene {
         return this
     }
     init_cursor() {
-
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.players[0].setMotion('attack')
+        });
+        this.input.keyboard.on('keyup-SPACE', () => {
+            //this.players[0].setMotion('walk')
+        });
 
         this.input.keyboard.on('keydown-W', () => {
             this.players[0].direction = this.players[0].directions['northEast']
@@ -186,6 +201,7 @@ export default class extends Phaser.Scene {
         return (tempPt);
     }
     find_path(event) {
+        return false
         let pos = Object.assign({}, event.position)
         let isoPt = new Phaser.Point(pos.x - borderOffset.x, pos.y - borderOffset.y)
         let tapPos = isometricToCartesian(isoPt)
