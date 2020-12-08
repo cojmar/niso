@@ -9,6 +9,6 @@ export default class extends Phaser.Scene {
         this.load.image('red', 'assets/particles/red.png');
     }
     create(data) {
-        this.game.load_scene('level1')
+        this.game.add_scene('level1')
     }
 }
