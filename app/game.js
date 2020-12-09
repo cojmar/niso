@@ -64,7 +64,7 @@ export default class extends Phaser.Scene {
             var angleSnapDeg = Phaser.Math.RadToDeg(angleSnap);
             var angleSnapDir = directions[angleSnapDeg];
             if (this.me.direction !== angleSnapDir) {
-                this.me.set({ direction: angleSnapDir, action: (!this.pointer_down) ? 'walk' : 'attack' })
+                this.me.set({ direction: angleSnapDir, action: (!this.pointer_down) ? 'walk' : 'attack', x: this.me.sprite.x, y: this.me.sprite.y })
             }
         });
 
@@ -195,10 +195,14 @@ export default class extends Phaser.Scene {
             action: 'idle'
         })
         this.cameras.main.startFollow(this.me.sprite)
-
-        //console.log(this.players)
-
-
+        this.update_me_interval = setInterval(() => {
+            this.game.net.send_cmd('set_data', {
+                x: this.me.sprite.x,
+                y: this.me.sprite.y,
+                direction: this.me.direction,
+                action: this.me.action
+            })
+        }, 10000)
     }
     render_room_users() {
         let i = 200;
