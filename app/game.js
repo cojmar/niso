@@ -31,9 +31,7 @@ export default class extends Phaser.Scene {
     }
 
     bind_controls() {
-
         let SNAP_INTERVAL = Phaser.Math.PI2 / 8;
-
         let directions = {
             '-180': 'w',
             '-135': 'nw',
@@ -141,11 +139,11 @@ export default class extends Phaser.Scene {
         })
         if (player_key === false) return false
         this.players.splice(player_key, 1)
-        setTimeout(() => {
+        try {
             player.sprite.destroy()
-        }, 1000);
+        } catch (error) {
 
-
+        }
     }
     set_player(player_id, input_data) {
         if (!player_id) return false
@@ -187,7 +185,7 @@ export default class extends Phaser.Scene {
     }
     create() {
         this.bind_controls().make_animations().make_map().render_room_users()
-        this.cameras.main.setZoom(1.5);
+        this.cameras.main.setZoom(1.8);
         this.me = this.get_player(this.game.net.me.info.user)
         this.me.set({
             x: 600,
