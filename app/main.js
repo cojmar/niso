@@ -1,17 +1,24 @@
 new class {
     constructor() {
         this.preloaded_scenes = []
-        this.init_game().extend_game().hide_loader().main()
+        this.init_game().extend_game().main()
         window.app = this
     }
     init_game() {
         this.game = new Phaser.Game({
-            type: Phaser.AUTO,
+            type: Phaser.WEBGL,
+            backgroundColor: '#ffffff',
             width: '100%',
             height: '100%',
             physics: {
                 default: 'arcade',
-            }
+            },
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: window.screen.width,
+                height: window.screen.height
+            },
         });
         return this
     }
@@ -38,8 +45,21 @@ new class {
         return this
     }
     main() {
-        this.game.add_scene('preload', scene => {
-            //console.log(scene)
+        import (`./network.js`).then((module) => {
+            this.game.net = new module.default()
+            this.game.net.on('connect', () => {
+
+                this.game.net.send_cmd('auth', { 'user': '', 'room': 'NiSo-MMO' })
+
+
+            })
+            this.game.net.on('auth.info', (data) => {
+                this.hide_loader()
+                this.game.add_scene('preload')
+            })
+
+
+            this.game.net.connect('wss://ws.emupedia.net')
         })
     }
 }
