@@ -63,7 +63,9 @@ export default class extends Phaser.Scene {
             var angleSnap = Phaser.Math.Snap.To(angle, SNAP_INTERVAL);
             var angleSnapDeg = Phaser.Math.RadToDeg(angleSnap);
             var angleSnapDir = directions[angleSnapDeg];
-            this.me.set({ direction: angleSnapDir, action: 'walk' })
+            if (this.me.direction !== angleSnapDir) {
+                this.me.set({ direction: angleSnapDir, action: (!this.pointer_down) ? 'walk' : 'attack' })
+            }
         });
 
 
