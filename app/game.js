@@ -182,16 +182,23 @@ export default class extends Phaser.Scene {
         if (typeof input_data === 'object') player.input_data = (typeof player.input_data === 'object') ? Object.assign(player.input_data, input_data) : input_data
         return player
     }
-    create() {
-        this.bind_controls().make_animations().make_map().render_room_users()
-        this.cameras.main.setZoom(1.8);
-        this.me = this.get_player(this.game.net.me.info.user)
-        this.me.set({
+    reset_player(player_id) {
+        let player = this.get_player(player_id)
+        if (!player) return false
+        player.set({
             x: 600,
             y: 300,
             action: 'idle'
         })
+
+    }
+    create() {
+        this.bind_controls().make_animations().make_map().render_room_users()
+        this.cameras.main.setZoom(1.8);
+        this.me = this.get_player(this.game.net.me.info.user)
         this.cameras.main.startFollow(this.me.sprite)
+
+        //=Update my position every 10 sec
         this.update_me_interval = setInterval(() => {
             this.game.net.send_cmd('set_data', {
                 x: this.me.sprite.x,
@@ -200,6 +207,9 @@ export default class extends Phaser.Scene {
                 action: this.me.action
             })
         }, 10000)
+
+        //=Reset me
+        setTimeout(() => this.reset_player(this.me.id));
     }
     render_room_users() {
         let i = 200;
