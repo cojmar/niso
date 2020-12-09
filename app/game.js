@@ -61,7 +61,7 @@ export default class extends Phaser.Scene {
             var angleSnap = Phaser.Math.Snap.To(angle, SNAP_INTERVAL);
             var angleSnapDeg = Phaser.Math.RadToDeg(angleSnap);
             var angleSnapDir = directions[angleSnapDeg];
-            if (this.me.direction !== angleSnapDir) {
+            if (this.me.direction !== angleSnapDir || this.me.action === 'idle') {
                 this.me.set({ direction: angleSnapDir, action: (!this.pointer_down) ? 'walk' : 'attack', x: this.me.sprite.x, y: this.me.sprite.y })
             }
         });
@@ -168,13 +168,12 @@ export default class extends Phaser.Scene {
             player.sprite.on('animationcomplete', (anim, frame) => {
                 let action = anim.key.split('-')[0]
                 if (action === 'attack') {
-                    if (this.me && this.pointer_down) {
+                    player.sprite.play(player.animation)
+                    if (this.me && !this.pointer_down) {
                         if (this.me.id === player.id) {
-
-                            this.me.sprite.play(player.animation, 0)
-                            player.set({ 'action': 'attack' })
-                        } else player.set({ 'action': 'idle' })
-                    } else player.set({ 'action': 'idle' })
+                            player.set({ 'action': 'idle' })
+                        }
+                    }
                 }
             });
             this.players.push(player)
