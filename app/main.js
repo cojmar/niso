@@ -12,6 +12,9 @@ new class {
             height: '100%',
             physics: {
                 default: 'arcade',
+                arcade: {
+                    //debug: true,
+                }
             },
             scale: {
                 mode: Phaser.Scale.FIT,
