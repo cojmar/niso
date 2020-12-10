@@ -357,7 +357,9 @@ export default class extends Phaser.Scene {
             top.sort((a, b) => (a.kills < b.kills) ? 1 : -1)
             top.map((player, rank) => {
                 if (player.user === this.me.id) this.gui.top_players.addSeparator();
-                this.gui.top_players.addButton({ title: `${rank+1} ${player.nick} K:${player.kills} D:${player.deaths}` });
+                let pos = rank + 1
+                if (player.user === this.me.id) pos = `[${pos}]`
+                this.gui.top_players.addButton({ title: `${pos} ${player.nick} K:${player.kills} D:${player.deaths}` });
                 if (player.user === this.me.id) this.gui.top_players.addSeparator();
             })
 
