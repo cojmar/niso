@@ -281,19 +281,6 @@ export default class extends Phaser.Scene {
         this.me = this.get_player(this.game.net.me.info.user)
         this.cameras.main.startFollow(this.me.sprite)
 
-
-        //=Update my position every 10
-        /*
-        this.update_me_interval = setInterval(() => {
-            this.game.net.send_cmd('set_data', {
-                x: this.me.sprite.x,
-                y: this.me.sprite.y,
-                direction: this.me.direction,
-                action: this.me.action
-            })
-        }, 10000)
-        */
-
         //=Reset me
         setTimeout(() => {
             this.reset_player(this.me.id)
@@ -341,7 +328,7 @@ export default class extends Phaser.Scene {
                 this.gui.top_players.dispose()
             }
             this.gui.top_players = this.gui.addFolder({
-                title: `Top`,
+                title: `Online players TOP [you]`,
                 expanded: true
             })
 
@@ -356,11 +343,11 @@ export default class extends Phaser.Scene {
 
             top.sort((a, b) => (a.kills < b.kills) ? 1 : -1)
             top.map((player, rank) => {
-                if (player.user === this.me.id) this.gui.top_players.addSeparator();
+
                 let pos = rank + 1
                 if (player.user === this.me.id) pos = `[${pos}]`
                 this.gui.top_players.addButton({ title: `${pos} ${player.nick} K:${player.kills} D:${player.deaths}` });
-                if (player.user === this.me.id) this.gui.top_players.addSeparator();
+
             })
 
         }
@@ -373,26 +360,28 @@ export default class extends Phaser.Scene {
             title: `Player: ${this.game.net.me.info.nick}`,
             expanded: false
         })
-        const pane2 = this.gui.addFolder({
+        const pane3 = this.gui.addFolder({
             title: `Stats`,
             expanded: true
         })
-        const pane3 = this.gui.addFolder({
-            title: `PvP`,
-            expanded: true
+        const pane2 = this.gui.addFolder({
+            title: `Details`,
+            expanded: false
         })
+        this.gui.addSeparator();
+
         pane.addInput(this.gui_data, 'Action');
         pane.addInput(this.gui_data, 'Direction');
         pane.addInput(this.gui_data, 'POSITION');
-        pane2.addInput(this.gui_data, 'HEALTH', {
-            step: 1,
-            min: 0,
-            max: 100,
-        });
         pane2.addInput(this.gui_data, 'MOVE SPEED');
         pane2.addInput(this.gui_data, 'MIN DMG', { step: 1 });
         pane2.addInput(this.gui_data, 'MAX DMG', { step: 1 });
         pane2.addInput(this.gui_data, 'LAST ATTACK', { step: 1 });
+        pane3.addInput(this.gui_data, 'HEALTH', {
+            step: 1,
+            min: 0,
+            max: 100,
+        });
         pane3.addInput(this.gui_data, 'KILLS', { step: 1 });
         pane3.addInput(this.gui_data, 'DEATHS', { step: 1 });
         return this
