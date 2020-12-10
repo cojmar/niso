@@ -385,6 +385,7 @@ export default class extends Phaser.Scene {
         pane.addInput(this.gui_data, 'Direction');
         pane.addInput(this.gui_data, 'POSITION');
         pane2.addInput(this.gui_data, 'HEALTH', {
+            step: 1,
             min: 0,
             max: 100,
         });
