@@ -283,6 +283,7 @@ export default class extends Phaser.Scene {
 
 
         //=Update my position every 10
+        /*
         this.update_me_interval = setInterval(() => {
             this.game.net.send_cmd('set_data', {
                 x: this.me.sprite.x,
@@ -291,6 +292,7 @@ export default class extends Phaser.Scene {
                 action: this.me.action
             })
         }, 10000)
+        */
 
         //=Reset me
         setTimeout(() => {
