@@ -149,8 +149,10 @@ export default class extends Phaser.Scene {
 
         if (player.animation !== `${player.action}-${player.direction}`) {
             player.animation = `${player.action}-${player.direction}`
-            player.sprite.play(player.animation, 0)
+            if (player.action !== '') player.sprite.play(player.animation, 0)
         }
+        // Set player depth
+        player.sprite.depth = player.sprite.y + 20
     }
     set_player(player_id, input_data) {
         if (!player_id) return false
@@ -161,7 +163,7 @@ export default class extends Phaser.Scene {
                 x: 0,
                 y: 0,
                 direction: 's',
-                action: 'idle',
+                action: '',
                 speed: 0.12,
                 hp: 100,
                 attack: [5, 20],
@@ -220,9 +222,9 @@ export default class extends Phaser.Scene {
     player_collision(p1, p2, delta) {
         let player1 = this.get_player(p1.player_id)
         let player2 = this.get_player(p2.player_id)
-        if (player1.action === 'die' || player2.action === 'die') return false
 
         // Attack
+        if (player1.action === 'die' || player2.action === 'die') return false
         if (player1.action === 'attack' || player2.action === 'attack') {
             // Calculate player direction and and action are ok for attack
             let dir_p2 = this.find_direction_between_points(p1.x, p1.y, p2.x, p2.y)
