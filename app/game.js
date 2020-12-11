@@ -287,6 +287,7 @@ export default class extends Phaser.Scene {
 
     }
     create() {
+        this.game.add_scene('menu')
         this.bind_controls().make_animations().make_map().render_room_users()
         this.cameras.main.setZoom(1.8);
         this.me = this.get_player(this.game.net.me.info.user)
