@@ -83,9 +83,10 @@ export default class extends Phaser.Scene {
     }
     make_animations() {
         [{ name: 'idle', startFrame: 0, endFrame: 4 },
-            { name: 'walk', startFrame: 4, endFrame: 11 },
+            { name: 'walk', startFrame: 4, endFrame: 12 },
             { name: 'attack', startFrame: 12, endFrame: 19, repeat: 0, frameRate: 15 },
             { name: 'die', startFrame: 20, endFrame: 27, repeat: 0 },
+            { name: 'resurrect', startFrame: 26, endFrame: 21, repeat: 0 },
             { name: 'shoot', startFrame: 28, endFrame: 32 }
         ].map(ani => {
             Object.keys(this.directions).map(dir => {
@@ -190,8 +191,16 @@ export default class extends Phaser.Scene {
 
                 // Die
                 if (action === 'die') {
-                    this.reset_player(player.id)
+                    if (this.me && this.me.id === player.id) {
+                        this.reset_player(player.id)
+                    }
                 }
+
+                // Resurrect
+                if (action === 'resurrect') {
+                    player.set({ 'action': 'idle' })
+                }
+
 
             });
 
@@ -271,7 +280,7 @@ export default class extends Phaser.Scene {
             y: this.random_from_interval(200, 600),
             hp: 100,
             dmg: [5, 20],
-            action: 'idle'
+            action: 'resurrect'
         })
 
     }
