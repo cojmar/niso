@@ -235,8 +235,8 @@ export default class extends Phaser.Scene {
             if (player2.action !== 'attack') p2_can_hit = false
 
             // If animation not on frame 3 don't consider hit
-            if (p1.anims.currentFrame.index !== 3) p1_can_hit = false
-            if (p2.anims.currentFrame.index !== 3) p2_can_hit = false
+            if (!p1.anims.currentFrame || p1.anims.currentFrame.index !== 3) p1_can_hit = false
+            if (!p2.anims.currentFrame || p2.anims.currentFrame.index !== 3) p2_can_hit = false
 
             // If both player can hit pick one random to do
             if (p1_can_hit && p2_can_hit) {
