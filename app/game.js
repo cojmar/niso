@@ -9,6 +9,7 @@ export default class extends Phaser.Scene {
         this.load.spritesheet('skeleton', 'skeleton8.png', { frameWidth: 128, frameHeight: 128 });
     }
     init() {
+        this.frameTime = 0
         this.last_delta = 0
         this.players = []
         this.directions = {
@@ -164,7 +165,7 @@ export default class extends Phaser.Scene {
                 y: 0,
                 direction: 's',
                 action: '',
-                speed: 0.12,
+                speed: 1,
                 hp: 100,
                 attack: [5, 20],
                 last_attack: 0,
@@ -311,7 +312,16 @@ export default class extends Phaser.Scene {
 
 
     update(delta) {
+        if (delta - this.frameTime < 32) return
+            //console.log(delta - this.frameTime)
+        this.frameTime = delta
+
+
+
+
         this.players.map(player => player.update(delta))
+
+
         this.make_gui_data(delta)
         if (this.gui) this.gui.refresh()
     }
