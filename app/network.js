@@ -90,8 +90,14 @@ export default class {
         }
         return true;
     }
+    strip_html(str) {
+        return str.replace(/[\u00A0-\u9999<>&]/g, function(i) {
+            return '&#' + i.charCodeAt(0) + ';';
+        });
+    }
     emit_event(ev, data) {
         if (!ev) return false;
+        if (ev === 'room.msg' && data.msg) data.msg = this.strip_html(data.msg)
         if (!this.map_room(ev, data)) return false;
         if (typeof this.events[ev] === 'object') this.events[ev].forEach(cb => {
             cb(data);
