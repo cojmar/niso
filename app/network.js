@@ -91,7 +91,7 @@ export default class {
         return true;
     }
     strip_html(str) {
-        return str.replace(/(<([^>]+)>)/gi, "")
+        return str.replace(/(<([^>]+)>)/gi, "").replace('<', '&lt;').replace('>', '&gt;')
     }
     emit_event(ev, data) {
         if (!ev) return false;
