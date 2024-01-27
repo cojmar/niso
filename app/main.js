@@ -62,7 +62,7 @@ new class {
             })
 
 
-            this.game.net.connect('wss://ws.emupedia.net')
+            this.game.net.connect('wss://ws.emupedia.net/ws')
         })
     }
 }
